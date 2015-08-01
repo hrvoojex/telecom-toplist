@@ -102,7 +102,7 @@ class App(QtGui.QWidget):
         # show a widget
         self.show()
 
-    def lines(self, csv_file,encoding_code, user_choice):
+    def lines(self, csv_file, encoding_code, user_choice):
         """
         Takes a csv file as an input,
         filters lines by keywords,
