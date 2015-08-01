@@ -9,7 +9,6 @@ from PySide import QtCore
 from PySide.QtCore import Slot
 
 
-
 class App(QtGui.QWidget):
 
     def __init__(self, parent=None):
@@ -158,7 +157,9 @@ class App(QtGui.QWidget):
         return  tmp
 
     def saving_to_file(self, filename):
-
+        """
+        Saves result to a csv file
+        """
         f = open(filename, "w")
         count = 0
         for line in self.sorted_dictionary:
@@ -181,7 +182,7 @@ class App(QtGui.QWidget):
         #print dicton
         for key in list_of_tuples:
             # append second member of tuple as a identifier from csv fname
-            # e.g. (12, u"borovo77"), second is borovo77
+            # e.g. (12, u"bo77"), second is bo77
             li.append(key[1])
 
         for line in data:
@@ -200,7 +201,9 @@ class App(QtGui.QWidget):
 
     @Slot()
     def select_file(self):
-
+        """
+        You choose a file from a disk
+        """
         self.fname = QtGui.QFileDialog.getOpenFileName()
         # print first element in a tuple
         self.statusLabel.setText(str(self.fname[0]))
@@ -226,11 +229,8 @@ class App(QtGui.QWidget):
             dictionary = self.lines(self.fname,
                             self.encode_string,
                             self.keyword_string)
-            self.sorted_dictionary = self.sort_dictionary_to_list(dictionary)
-            print self.sorted_dictionary
-            self.take_from_addressbook(self.sorted_dictionary,
-                                       self.aname)
-            # saving to a file
+            print dictionary
+
             self.saving_to_file(self.take_from_addressbook())
         except:
             self.statusLabel.setText("File not selected!")
