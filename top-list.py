@@ -158,14 +158,14 @@ class App(QtGui.QWidget):
 
     def saving_to_file(self, filename):
         """
-        Saves result to a csv file
+        Saves result to a csv file. Takes listname and saves it
+        to a csv file named filename
         """
         f = open(filename, "w")
         count = 0
-        for line in self.sorted_dictionary:
+        for line in self.list_of_tuples:
             count += 1
-            f.write(str(count) + ".;" + str(line[1]) + \
-                    ";" + str(line[0]) + "\n")
+            f.write(str(count) + ". " + str(line[1]) + str(line[0]))
         f.close()
 
     def take_from_addressbook(self, list_of_tuples, csv_addressbook):
@@ -229,10 +229,12 @@ class App(QtGui.QWidget):
             dictionary = self.lines(self.fname,
                             self.encode_string,
                             self.keyword_string)
-            print dictionary
+            self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
+            print self.list_of_tuples
 
-            self.saving_to_file(self.take_from_addressbook())
-        except:
+            self.saving_to_file(self.outputfileLine.text())
+        except ValueError:
+            print e
             self.statusLabel.setText("File not selected!")
             self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
 
