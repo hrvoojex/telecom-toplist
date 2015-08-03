@@ -130,31 +130,33 @@ class App(QtGui.QWidget):
 
                 if word in mod_list:
                     if user_choice == "TRAFFIC":
-                        dictionary[line[2]] = (
-                            dictionary.get(line[2], 0) + int(line[5]))
+                        dictionary[line[2]] = (dictionary.get(line[2], 0) +
+                                               int(line[5]))
                     elif user_choice == "TIME":
                         temp = line[6].split(":")
                         converted = float(temp[0]) + float(temp[1]) / 60.0
                         new_key = line[1] + ' ' + line[2]
-                        dictionary[new_key] = (
-                            dictionary.get(new_key, 0) + converted)
+                        dictionary[new_key] = (dictionary.get(new_key, 0) +
+                                               converted)
                     else:
                         new_key = line[1] + ' ' + line[2]
                         dictionary[new_key] = (
                             dictionary.get(new_key, 0) +
-                            float(line[9].replace(',', '.')))  #15,2 to 15.2
+                            # 15,2 to 15.2
+                            float(line[9].replace(',', '.')))
+
         return dictionary
 
     def sort_dictionary_to_list(self, diction):
         """
-        Takes dictionary diction and returns
-        sorted list of tuples by value from dictionary
+        Takes dictionary (e.g. from lines() function) diction
+        and returns sorted list of tuples by value from dictionary.
         """
         tmp = list()
         for key, val in diction.items():
             tmp.append((val, key))
             tmp.sort(reverse=True)
-        return  tmp
+        return tmp
 
     def saving_to_file(self, filename):
         """
@@ -166,40 +168,36 @@ class App(QtGui.QWidget):
         for line in self.list_of_tuples:
             count += 1
             f.write("{0:3}; {1:10}; {2:3}\n".format(count,
-                                                   line[1],
-                                                   line[0]))
+                                                    line[1],
+                                                    line[0]))
         f.close()
 
     def take_from_addressbook(self, list_of_tuples, csv_addressbook):
         """
-        Takes a dictionary and addressbook and compares
+        Takes a dictionary and addressbook file and compares
         identificator from dictionary to a name from addressbook
         """
-        dictionary = dict()
-        li = list()
+        dictionary_of_identifiers = dict()
+        list_of_identifiers = list()
         try:
-            data = open(csv_addressbook)
+            csv_file = open(csv_addressbook)
         except:
             print("No such file %s" % csv_addressbook)
         #print dicton
         for key in list_of_tuples:
             # append second member of tuple as a identifier from csv fname
-            # e.g. (12, u"bo77"), second is bo77
-            li.append(key[1])
+            # e.g. tuple==>(12, u"John"), second is John
+            list_of_identifiers.append(key[1])
 
-        for line in data:
+        for line in csv_file:
             line = line.rstrip()
             line = line.decode(self.encodingLine.text())
             line = line.split(";")
-            for word in line:
-                if word in li:
-                    dictionary[word] = line[2]
-        #print dictionary
-
-        #######################################################################
-        # this dictionary has to be saved with a function which
-        # accepts list, fix this!!!
-        return dictionary
+            for word_from_csv_file in line:
+                if word_from_csv_file in list_of_identifiers:
+                    dictionary_of_identifiers[word_from_csv_file] = line[2]
+    
+        return dictionary_of_identifiers
 
     @Slot()
     def select_file(self):
@@ -219,7 +217,8 @@ class App(QtGui.QWidget):
     def select_addressbook(self):
 
         self.aname = QtGui.QFileDialog.getOpenFileName()
-        # print first element in a tuple
+        # assign first element in a tuple,
+        # addressbook file name as statusLabel text
         self.statusLabel.setText(str(self.aname[0]))
         #self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
 
@@ -229,11 +228,10 @@ class App(QtGui.QWidget):
             self.keyword_string = self.keywordComboBox.currentText()
             self.encode_string = self.encodingLine.text()
             dictionary = self.lines(self.fname,
-                            self.encode_string,
-                            self.keyword_string)
+                                    self.encode_string,
+                                    self.keyword_string)
             self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
             print self.list_of_tuples
-
             self.saving_to_file(self.outputfileLine.text())
         except ValueError:
             print e
