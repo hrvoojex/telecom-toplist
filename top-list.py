@@ -165,7 +165,7 @@ class App(QtGui.QWidget):
         """
         f = open(filename, "w")
         count = 0
-        for line in self.list_of_tuples:
+        for line in self.final_tuple:
             count += 1
             f.write("{0:3}; {1:10}; {2:3}\n".format(count,
                                                     line[1],
@@ -177,27 +177,27 @@ class App(QtGui.QWidget):
         Takes a dictionary and addressbook file and compares
         identificator from dictionary to a name from addressbook
         """
-        dictionary_of_identifiers = dict()
-        list_of_identifiers = list()
+        new_list = list_of_tuples
+        old_list = list()
         try:
             csv_file = open(csv_addressbook)
         except:
             print("No such file %s" % csv_addressbook)
-        #print dicton
-        for key in list_of_tuples:
-            # append second member of tuple as a identifier from csv fname
-            # e.g. tuple==>(12, u"John"), second is John
-            list_of_identifiers.append(key[1])
+
+        for tpl in list_of_tuples:
+            # adds second value from tuple
+            # into the list "old_list" as identifier
+            old_list.append(tpl[1])
 
         for line in csv_file:
             line = line.rstrip()
             line = line.decode(self.encodingLine.text())
             line = line.split(";")
             for word_from_csv_file in line:
-                if word_from_csv_file in list_of_identifiers:
-                    dictionary_of_identifiers[word_from_csv_file] = line[2]
-    
-        return dictionary_of_identifiers
+                if word_from_csv_file in old_list:
+                    index = old_list.index(word_from_csv_file)
+                    new_list[index] = (list_of_tuples[index][0], line[2])
+        return new_list
 
     @Slot()
     def select_file(self):
@@ -231,10 +231,14 @@ class App(QtGui.QWidget):
                                     self.encode_string,
                                     self.keyword_string)
             self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
-            print self.list_of_tuples
+            self.final_tuple = self.take_from_addressbook(self.list_of_tuples,
+                                                          str(self.aname[0]))
+            #print self.list_of_tuples
+            print(self.final_tuple)
+            #self.saving_to_file(self.outputfileLine.text())
             self.saving_to_file(self.outputfileLine.text())
         except ValueError:
-            print e
+            print ValueError
             self.statusLabel.setText("File not selected!")
             self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
 
