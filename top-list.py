@@ -165,7 +165,9 @@ class App(QtGui.QWidget):
         count = 0
         for line in self.list_of_tuples:
             count += 1
-            f.write(str(count) + ". " + str(line[1]) + str(line[0]))
+            f.write("{0:3}; {1:10}; {2:3}\n".format(count,
+                                                   line[1],
+                                                   line[0]))
         f.close()
 
     def take_from_addressbook(self, list_of_tuples, csv_addressbook):
