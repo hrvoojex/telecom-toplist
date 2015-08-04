@@ -158,14 +158,14 @@ class App(QtGui.QWidget):
             tmp.sort(reverse=True)
         return tmp
 
-    def saving_to_file(self, filename):
+    def saving_to_file(self, filename, resulting_tuple):
         """
         Saves result to a csv file. Takes listname and saves it
         to a csv file named filename
         """
         f = open(filename, "w")
         count = 0
-        for line in self.final_tuple:
+        for line in resulting_tuple:
             count += 1
             f.write("{0:3}; {1:10}; {2:3}\n".format(count,
                                                     line[1],
@@ -231,12 +231,20 @@ class App(QtGui.QWidget):
                                     self.encode_string,
                                     self.keyword_string)
             self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
-            self.final_tuple = self.take_from_addressbook(self.list_of_tuples,
-                                                          str(self.aname[0]))
-            #print self.list_of_tuples
-            print(self.final_tuple)
-            #self.saving_to_file(self.outputfileLine.text())
-            self.saving_to_file(self.outputfileLine.text())
+            try:
+                self.final_tuple = self.take_from_addressbook(
+                    self.list_of_tuples,
+                    str(self.aname[0]))
+                #print self.list_of_tuples
+                print(self.final_tuple)
+                #self.saving_to_file(self.outputfileLine.text())
+                self.saving_to_file(self.outputfileLine.text(),
+                                    self.final_tuple)
+            except:
+                print(self.list_of_tuples)
+                self.saving_to_file(self.outputfileLine.text(),
+                                    self.list_of_tuples)
+
         except ValueError:
             print ValueError
             self.statusLabel.setText("File not selected!")
