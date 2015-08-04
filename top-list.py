@@ -158,18 +158,19 @@ class App(QtGui.QWidget):
             tmp.sort(reverse=True)
         return tmp
 
-    def saving_to_file(self, filename, resulting_tuple):
+    def saving_to_file(self, filename, resulting_tuple_list):
         """
         Saves result to a csv file. Takes listname and saves it
         to a csv file named filename
         """
         f = open(filename, "w")
         count = 0
-        for line in resulting_tuple:
+        for tuple_list_item in resulting_tuple_list:
             count += 1
-            f.write("{0:3}; {1:10}; {2:3}\n".format(count,
-                                                    line[1],
-                                                    line[0]))
+            location = tuple_list_item[1].encode(self.encode_string)
+            f.write("{0:5}; {1:25}; {2:5}\n".format(count,
+                                                    location,
+                                                    tuple_list_item[0]))
         f.close()
 
     def take_from_addressbook(self, list_of_tuples, csv_addressbook):
@@ -215,7 +216,9 @@ class App(QtGui.QWidget):
 
     @Slot()
     def select_addressbook(self):
-
+        """
+        Select the addressbook file from file system
+        """
         self.aname = QtGui.QFileDialog.getOpenFileName()
         # assign first element in a tuple,
         # addressbook file name as statusLabel text
@@ -224,31 +227,22 @@ class App(QtGui.QWidget):
 
     @Slot()
     def do_submit(self):
-        try:
-            self.keyword_string = self.keywordComboBox.currentText()
-            self.encode_string = self.encodingLine.text()
-            dictionary = self.lines(self.fname,
-                                    self.encode_string,
-                                    self.keyword_string)
-            self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
-            try:
-                self.final_tuple = self.take_from_addressbook(
-                    self.list_of_tuples,
-                    str(self.aname[0]))
-                #print self.list_of_tuples
-                print(self.final_tuple)
-                #self.saving_to_file(self.outputfileLine.text())
-                self.saving_to_file(self.outputfileLine.text(),
-                                    self.final_tuple)
-            except:
-                print(self.list_of_tuples)
-                self.saving_to_file(self.outputfileLine.text(),
-                                    self.list_of_tuples)
-
-        except ValueError:
-            print ValueError
-            self.statusLabel.setText("File not selected!")
-            self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
+        self.keyword_string = self.keywordComboBox.currentText()
+        self.encode_string = self.encodingLine.text()
+        dictionary = self.lines(self.fname,
+                                self.encode_string,
+                                self.keyword_string)
+        self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
+        self.final_tuple = self.take_from_addressbook(self.list_of_tuples,
+                                                      str(self.aname[0]))
+        #print self.list_of_tuples
+        #print(self.final_tuple)
+        #self.saving_to_file(self.outputfileLine.text())
+        self.saving_to_file(self.outputfileLine.text(),
+                            self.final_tuple)
+        print(self.list_of_tuples)
+        self.saving_to_file(self.outputfileLine.text(),
+                            self.list_of_tuples)
 
 
 def main():
