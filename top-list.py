@@ -233,8 +233,12 @@ class App(QtGui.QWidget):
                                 self.encode_string,
                                 self.keyword_string)
         self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
-        self.final_tuple = self.take_from_addressbook(self.list_of_tuples,
-                                                      str(self.aname[0]))
+        try:
+            self.final_tuple = self.take_from_addressbook(self.list_of_tuples,
+                                                          str(self.aname[0]))
+        except:
+            self.final_tuple = self.list_of_tuples
+            
         #print self.list_of_tuples
         #print(self.final_tuple)
         #self.saving_to_file(self.outputfileLine.text())
