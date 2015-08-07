@@ -200,14 +200,36 @@ class App(QtGui.QWidget):
                     new_list[index] = (list_of_tuples[index][0], line[2])
         return new_list
 
+    def filename_from_path(self, file_path):
+        """
+        Takes file path as string and returns
+        only a file name without path
+        """
+        count = 0
+        file_name = ""
+        for char in file_path:
+            count += 1
+            if file_path[-count] == "/" or file_path[-count] == "\\":
+                break
+            file_name = file_name + file_path[-count]
+
+        num = 0
+        new_file_name = ""
+        for char in file_name:
+            num += 1
+            new_file_name += file_name[-num]
+
+        return  new_file_name
+
     @Slot()
     def select_file(self):
         """
         You choose a file from a disk
         """
         self.fname = QtGui.QFileDialog.getOpenFileName()
-        # print first element in a tuple
-        self.statusLabel.setText(str(self.fname[0]))
+        # print first element in a tuple self.fname[0] which is a file name
+        # that it calls file_name_from_path to print only a file name
+        self.statusLabel.setText(str(self.filename_from_path(self.fname[0])))
         self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
         if str(self.fname[0]) is not "":
             self.submitButton.setEnabled(True)
@@ -222,7 +244,7 @@ class App(QtGui.QWidget):
         self.aname = QtGui.QFileDialog.getOpenFileName()
         # assign first element in a tuple,
         # addressbook file name as statusLabel text
-        self.statusLabel.setText(str(self.aname[0]))
+        self.statusLabel.setText(self.filename_from_path(str(self.aname[0])))
         #self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
 
     @Slot()
@@ -238,7 +260,7 @@ class App(QtGui.QWidget):
                                                           str(self.aname[0]))
         except:
             self.final_tuple = self.list_of_tuples
-            
+
         #print self.list_of_tuples
         #print(self.final_tuple)
         #self.saving_to_file(self.outputfileLine.text())
