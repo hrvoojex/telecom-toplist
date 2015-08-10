@@ -46,7 +46,7 @@ class App(QtGui.QWidget):
 
     def initUI(self):
 
-        self.setMinimumSize(500, 300)
+        self.setMinimumSize(400, 300)
         self.setWindowTitle("Telecom Top list")
         self.setWindowIcon(QtGui.QIcon("phonebill.png"))
 
@@ -63,11 +63,17 @@ class App(QtGui.QWidget):
         #self.fileLine.setPlaceholderText("e.g. somefile.csv")
         self.fileButton = QtGui.QPushButton("Browse", self)
         self.fileButton.resize(self.fileButton.sizeHint())
-        self.statusLabel = QtGui.QLabel()
-        self.statusLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+        self.statusfileLabel = QtGui.QLabel()
+        self.statusfileLabel.setFrameStyle(
+            QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+        self.statusaddressLabel = QtGui.QLabel()
+        self.statusaddressLabel.setFrameStyle(
+            QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.statusLabel_left = QtGui.QLabel("Status:")
         self.statusLabel_left.setAlignment(QtCore.Qt.AlignTop)
-        self.submitButton = QtGui.QPushButton("Submit")
+        self.submitButton = QtGui.QPushButton("&Submit")
+        self.submitButton.setMinimumSize(50, 50)
+
         self.submitButton.setDisabled(True)
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLabel = QtGui.QLabel("Output file:")
@@ -88,8 +94,8 @@ class App(QtGui.QWidget):
         grid.addWidget(self.encodingLabel, 1, 0)
         grid.addWidget(self.fileLabel, 2, 0)
         grid.addWidget(self.fileButton, 2, 2)
-        grid.addWidget(self.statusLabel, 5, 1, 1, 2)
-        grid.addWidget(self.statusLabel_left, 5, 0)
+        grid.addWidget(self.statusfileLabel, 2, 1)
+        grid.addWidget(self.statusaddressLabel, 4, 1)
         grid.addWidget(self.submitButton, 6, 2)
         grid.addWidget(self.outputfileLabel, 3, 0)
         grid.addWidget(self.outputfileLine, 3, 1, 1, 2)
@@ -229,8 +235,9 @@ class App(QtGui.QWidget):
         self.fname = QtGui.QFileDialog.getOpenFileName()
         # print first element in a tuple self.fname[0] which is a file name
         # that it calls file_name_from_path to print only a file name
-        self.statusLabel.setText(str(self.filename_from_path(self.fname[0])))
-        self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
+        self.statusfileLabel.setText(str(
+            self.filename_from_path(self.fname[0])))
+        # self.statusfileLabel.setAlignment(QtCore.Qt.AlignTop)
         if str(self.fname[0]) is not "":
             self.submitButton.setEnabled(True)
         else:
@@ -244,7 +251,8 @@ class App(QtGui.QWidget):
         self.aname = QtGui.QFileDialog.getOpenFileName()
         # assign first element in a tuple,
         # addressbook file name as statusLabel text
-        self.statusLabel.setText(self.filename_from_path(str(self.aname[0])))
+        self.statusaddressLabel.setText(
+            self.filename_from_path(str(self.aname[0])))
         #self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
 
     @Slot()
