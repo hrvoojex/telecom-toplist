@@ -9,6 +9,29 @@ from PySide import QtCore
 from PySide.QtCore import Slot
 
 
+class Window(QtGui.QMainWindow):
+
+    def __init__(self, parent=None):
+        super(Window, self).__init__(parent)
+
+        # setting an App class as a central widget in Window class
+        widget = App()
+        self.setCentralWidget(widget)
+
+        exitAction = QtGui.QAction('Exit', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(self.close)
+
+        self.statusBar()
+
+        menubar = self.menuBar()
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(exitAction)
+
+        self.show()
+
+
 class App(QtGui.QWidget):
 
     def __init__(self, parent=None):
@@ -46,7 +69,7 @@ class App(QtGui.QWidget):
 
     def initUI(self):
 
-        self.setMinimumSize(400, 300)
+        self.setMinimumSize(450, 300)
         self.setWindowTitle("Telecom Top list")
         self.setWindowIcon(QtGui.QIcon("phonebill.png"))
 
@@ -282,7 +305,7 @@ class App(QtGui.QWidget):
 def main():
 
     app = QtGui.QApplication(sys.argv)
-    ex = App()
+    ex = Window()
     sys.exit(app.exec_())
 
 
