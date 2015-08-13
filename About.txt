@@ -1,0 +1,11 @@
+Toplist-Com is an application which loads T-Com .csv phone bill files 
+and writes them back to an output csv file as a top list. 
+
+This application helps to quickly identify largest phone 
+and internet consumers in the company. You can sort a list 
+by internet data traffic, by amount which you have to pay 
+to the telecom company or by the time spent on the phone talking.
+
+Version: Toplist-Com v0.1
+Author: HrvojeT
+Licence: GPLv2

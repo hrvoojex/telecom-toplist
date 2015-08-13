@@ -9,31 +9,119 @@ from PySide import QtCore
 from PySide.QtCore import Slot
 
 
-class Window(QtGui.QMainWindow):
-
+class MyApp(QtGui.QMainWindow):
+    """
+    This class presents main application window
+    """
     def __init__(self, parent=None):
-        super(Window, self).__init__(parent)
+        super(MyApp, self).__init__(parent)
 
-        # setting an App class as a central widget in Window class
-        widget = App()
-        self.setCentralWidget(widget)
+        # main window size, title and icon
+        self.setMinimumSize(500, 350)
+        self.setWindowTitle("Toplist-Com")
+        self.setWindowIcon(QtGui.QIcon("toplist-com.png"))
 
-        exitAction = QtGui.QAction('Exit', self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(self.close)
+        # add status bar at the bottom of the main window
+        self.statusBar().showMessage('Ready')
 
-        self.statusBar()
+        # create instance of each tool widget and shows default one
+        self.app = App(self)
+        self.app.show()
+        self.mobile = Mobile(self)
+        # new pop up window for "About" info, no parent == new window
+        self.about = About()
 
-        menubar = self.menuBar()
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(exitAction)
+        # layout for central widget
+        centralWidget = QtGui.QWidget()
+        centralLayout = QtGui.QGridLayout()
+        centralLayout.addWidget(self.app, 0, 0)
+        centralLayout.addWidget(self.mobile, 1, 0)
+        centralWidget.setLayout(centralLayout)
 
-        self.show()
+        self.setCentralWidget(centralWidget)
+
+        # set the menu bar
+        menuFile = self.menuBar().addMenu("File")
+        menuFile.addAction("Exit", self.close)
+
+        menuSelect = self.menuBar().addMenu("Select")
+        menuSelect.addAction("Landline", self.show_app)
+        menuSelect.addAction("Mobile", self.show_mobile)
+
+        menuHelp = self.menuBar().addMenu("Help")
+        menuHelp.addAction("About", self.show_about)
+
+    def show_app(self):
+        self.app.show()
+        self.mobile.hide()
+        self.statusBar().showMessage("Landline")
+        self.setWindowTitle("Toplist-Com Landline")
+
+    def show_mobile(self):
+        self.app.hide()
+        self.mobile.show()
+        self.statusBar().showMessage("Mobile")
+        self.setWindowTitle("Toplist-Com Mobile")
+
+    def show_about(self):
+        self.about = About()
+        self.about.show()
+
+
+class About(QtGui.QWidget):
+    """
+    New pop up "About" window
+    """
+    def __init__(self, parent=None):
+        super(About, self).__init__(parent)
+
+        # set minimus size and window title
+        self.setMinimumSize(450, 300)
+        self.setWindowTitle("About Toplist-Com")
+
+
+        self.labelAbout = QtGui.QLabel(self)
+
+        # write a file A"aboutfile" in a label
+        aboutfile = "About.txt"
+        fh = open(aboutfile, "r")
+        with fh:
+            data = fh.read()
+            self.labelAbout.setText(data)
+
+        # add a widget self.labelAbout to a layout
+        layout = QtGui.QGridLayout()
+        layout.addWidget(self.labelAbout)
+        self.setLayout(layout)
+        # hide a window by default when the application starts
+        self.hide()
+
+
+class Mobile(QtGui.QWidget):
+    """
+    mobile content in a main window App
+    """
+    def __init__(self, parent=None):
+        super(Mobile, self).__init__(parent)
+
+        # set minimus size and window title
+        self.setMinimumSize(450, 300)
+        self.setWindowTitle("Mobile Toplist-Com")
+
+        # todays date
+        self.today = datetime.datetime.today()
+
+        # add a widget to a layout
+        layout = QtGui.QGridLayout()
+        layout.addWidget(QtGui.QLabel("Mobile"))
+        self.setLayout(layout)
+        self.hide()
 
 
 class App(QtGui.QWidget):
-
+    """
+    application logic in a main window
+    """
     def __init__(self, parent=None):
         super(App, self).__init__(parent)
 
@@ -63,15 +151,15 @@ class App(QtGui.QWidget):
             u'Mjese\u010Dna naknada',
             u'Mjese\u010Dna naknada za ADSL pristup',
             u'Usluge s posebnim tarifama',
-            u'POS transakcija']
+            u'POS transakcija'
+            u'Pozivi prema mobilnoj HT mre\u017di']
 
         self.initUI()
 
     def initUI(self):
 
         self.setMinimumSize(450, 300)
-        self.setWindowTitle("Telecom Top list")
-        self.setWindowIcon(QtGui.QIcon("phonebill.png"))
+        self.setWindowTitle("Landline Toplist-Com")
 
         # layouts of widgets
         self.keywordComboBox = QtGui.QComboBox()
@@ -111,24 +199,24 @@ class App(QtGui.QWidget):
 
         # set layout
         grid = QtGui.QGridLayout()
-        grid.addWidget(self.keywordComboBox, 0, 1, 1, 2)
-        grid.addWidget(self.encodingLine, 1, 1, 1, 2)
-        grid.addWidget(self.keywordeLabel, 0, 0)
-        grid.addWidget(self.encodingLabel, 1, 0)
-        grid.addWidget(self.fileLabel, 2, 0)
-        grid.addWidget(self.fileButton, 2, 2)
-        grid.addWidget(self.statusfileLabel, 2, 1)
-        grid.addWidget(self.statusaddressLabel, 4, 1)
-        grid.addWidget(self.submitButton, 6, 2)
-        grid.addWidget(self.outputfileLabel, 3, 0)
-        grid.addWidget(self.outputfileLine, 3, 1, 1, 2)
-        grid.addWidget(self.addressLabel, 4, 0)
-        grid.addWidget(self.addressButton, 4, 2)
+        grid.addWidget(self.keywordComboBox, 1, 1, 1, 2)
+        grid.addWidget(self.encodingLine, 2, 1, 1, 2)
+        grid.addWidget(self.keywordeLabel, 1, 0)
+        grid.addWidget(self.encodingLabel, 2, 0)
+        grid.addWidget(self.fileLabel, 3, 0)
+        grid.addWidget(self.fileButton, 3, 2)
+        grid.addWidget(self.statusfileLabel, 3, 1)
+        grid.addWidget(self.statusaddressLabel, 5, 1)
+        grid.addWidget(self.submitButton, 7, 2)
+        grid.addWidget(self.outputfileLabel, 4, 0)
+        grid.addWidget(self.outputfileLine, 4, 1, 1, 2)
+        grid.addWidget(self.addressLabel, 5, 0)
+        grid.addWidget(self.addressButton, 5, 2)
 
         self.setLayout(grid)
 
-        # show a widget
-        self.show()
+        # hide a widget
+        self.hide()
 
     def lines(self, csv_file, encoding_code, user_choice):
         """
@@ -292,9 +380,6 @@ class App(QtGui.QWidget):
         except:
             self.final_tuple = self.list_of_tuples
 
-        #print self.list_of_tuples
-        #print(self.final_tuple)
-        #self.saving_to_file(self.outputfileLine.text())
         self.saving_to_file(self.outputfileLine.text(),
                             self.final_tuple)
         print(self.list_of_tuples)
@@ -305,9 +390,9 @@ class App(QtGui.QWidget):
 def main():
 
     app = QtGui.QApplication(sys.argv)
-    ex = Window()
+    instance = MyApp()
+    instance.show()
     sys.exit(app.exec_())
-
 
 if __name__ == "__main__":
     main()
