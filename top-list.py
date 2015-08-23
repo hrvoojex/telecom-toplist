@@ -24,9 +24,9 @@ class MyApp(QtGui.QMainWindow):
         # add status bar at the bottom of the main window
         self.statusBar().showMessage('Ready')
 
-        # create instance of each tool widget and shows default one
+        # create instance of each 'select' menu widget and shows default one
         self.app = App(self)
-        self.app.show()
+        #self.app.show()
         self.mobile = Mobile(self)
         # new pop up window for "About" info, no parent == new window
         self.about = About()
@@ -44,7 +44,7 @@ class MyApp(QtGui.QMainWindow):
         menuFile = self.menuBar().addMenu("File")
         menuFile.addAction("Exit", self.close)
 
-        menuSelect = self.menuBar().addMenu("Select")
+        menuSelect = self.menuBar().addMenu("Mode")
         menuSelect.addAction("Landline", self.show_app)
         menuSelect.addAction("Mobile", self.show_mobile)
 
@@ -79,10 +79,10 @@ class About(QtGui.QWidget):
         self.setMinimumSize(450, 300)
         self.setWindowTitle("About Toplist-Com")
 
-
+        # add a label to write a file in it
         self.labelAbout = QtGui.QLabel(self)
 
-        # write a file A"aboutfile" in a label
+        # write a file in a label
         aboutfile = "About.txt"
         fh = open(aboutfile, "r")
         with fh:
@@ -94,27 +94,6 @@ class About(QtGui.QWidget):
         layout.addWidget(self.labelAbout)
         self.setLayout(layout)
         # hide a window by default when the application starts
-        self.hide()
-
-
-class Mobile(QtGui.QWidget):
-    """
-    mobile content in a main window App
-    """
-    def __init__(self, parent=None):
-        super(Mobile, self).__init__(parent)
-
-        # set minimus size and window title
-        self.setMinimumSize(450, 300)
-        self.setWindowTitle("Mobile Toplist-Com")
-
-        # todays date
-        self.today = datetime.datetime.today()
-
-        # add a widget to a layout
-        layout = QtGui.QGridLayout()
-        layout.addWidget(QtGui.QLabel("Mobile"))
-        self.setLayout(layout)
         self.hide()
 
 
@@ -162,35 +141,29 @@ class App(QtGui.QWidget):
         self.setWindowTitle("Landline Toplist-Com")
 
         # layouts of widgets
+        self.keywordeLabel = QtGui.QLabel("Choose a keyword:")
         self.keywordComboBox = QtGui.QComboBox()
         self.keywordComboBox.addItems(self.toplist_keywords)
+        self.encodingLabel = QtGui.QLabel("Encoding:")
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
         self.encodingLine.setPlaceholderText("e.g. windows-1250 or utf-8")
-        self.keywordeLabel = QtGui.QLabel("Choose a keyword:")
-        self.encodingLabel = QtGui.QLabel("Enter an encoding:")
-        self.fileLabel = QtGui.QLabel("Enter a T-HT csv file:")
-        #self.fileLine = QtGui.QLineEdit()
-        #self.fileLine.setPlaceholderText("e.g. somefile.csv")
+        self.fileLabel_left = QtGui.QLabel("Input file:")
+        self.fileLabel = QtGui.QLabel()
+        self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.fileButton = QtGui.QPushButton("Browse", self)
         self.fileButton.resize(self.fileButton.sizeHint())
-        self.statusfileLabel = QtGui.QLabel()
-        self.statusfileLabel.setFrameStyle(
-            QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        self.statusaddressLabel = QtGui.QLabel()
-        self.statusaddressLabel.setFrameStyle(
-            QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        self.statusLabel_left = QtGui.QLabel("Status:")
-        self.statusLabel_left.setAlignment(QtCore.Qt.AlignTop)
-        self.submitButton = QtGui.QPushButton("&Submit")
-        self.submitButton.setMinimumSize(50, 50)
-
-        self.submitButton.setDisabled(True)
-        self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLabel = QtGui.QLabel("Output file:")
+        self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText("toplist-" + str(self.today) + ".csv")
         self.addressLabel = QtGui.QLabel("Addressbook csv file:")
+        self.statusaddressLabel = QtGui.QLabel()
+        self.statusaddressLabel.setFrameStyle(
+                QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.addressButton = QtGui.QPushButton("Browse", self)
+        self.submitButton = QtGui.QPushButton("&Submit")
+        self.submitButton.setMinimumSize(50, 50)
+        self.submitButton.setDisabled(True)
 
         # event when the button is clicked
         self.fileButton.clicked.connect(self.select_file)
@@ -199,20 +172,19 @@ class App(QtGui.QWidget):
 
         # set layout
         grid = QtGui.QGridLayout()
-        grid.addWidget(self.keywordComboBox, 1, 1, 1, 2)
-        grid.addWidget(self.encodingLine, 2, 1, 1, 2)
-        grid.addWidget(self.keywordeLabel, 1, 0)
-        grid.addWidget(self.encodingLabel, 2, 0)
-        grid.addWidget(self.fileLabel, 3, 0)
-        grid.addWidget(self.fileButton, 3, 2)
-        grid.addWidget(self.statusfileLabel, 3, 1)
-        grid.addWidget(self.statusaddressLabel, 5, 1)
-        grid.addWidget(self.submitButton, 7, 2)
-        grid.addWidget(self.outputfileLabel, 4, 0)
-        grid.addWidget(self.outputfileLine, 4, 1, 1, 2)
+        grid.addWidget(self.keywordeLabel, 0, 0)
+        grid.addWidget(self.keywordComboBox, 0, 1, 1, 2)
+        grid.addWidget(self.encodingLabel, 1, 0)
+        grid.addWidget(self.encodingLine, 1, 1, 1, 2)
+        grid.addWidget(self.fileLabel_left, 2, 0)
+        grid.addWidget(self.fileLabel, 2, 1)
+        grid.addWidget(self.fileButton, 2, 2)
+        grid.addWidget(self.outputfileLabel, 3, 0)
+        grid.addWidget(self.outputfileLine, 3, 1, 1, 2)
         grid.addWidget(self.addressLabel, 5, 0)
+        grid.addWidget(self.statusaddressLabel, 5, 1)
         grid.addWidget(self.addressButton, 5, 2)
-
+        grid.addWidget(self.submitButton, 6, 2)
         self.setLayout(grid)
 
         # hide a widget
@@ -220,15 +192,14 @@ class App(QtGui.QWidget):
 
     def lines(self, csv_file, encoding_code, user_choice):
         """
-        Takes a csv file as an input,
-        filters lines by keywords,
+        Takes a csv file as an input, filters lines by keywords,
         returns a dictionary with selected lines and data of interest
         """
         dictionary = dict()
         try:
-            data = open(csv_file[0])
+            data = open(csv_file)
         except:
-            print("No such file %s" % self.fname[0])
+            print("No such file %s" % self.fname)
             sys.exit("Quitting...")
 
         for line in data:
@@ -261,7 +232,6 @@ class App(QtGui.QWidget):
                             dictionary.get(new_key, 0) +
                             # 15,2 to 15.2
                             float(line[9].replace(',', '.')))
-
         return dictionary
 
     def sort_dictionary_to_list(self, diction):
@@ -319,13 +289,14 @@ class App(QtGui.QWidget):
 
     def filename_from_path(self, file_path):
         """
-        Takes file path as string and returns
-        only a file name without path
+        Takes a file path as string and returns only a file name
         """
         count = 0
         file_name = ""
         for char in file_path:
             count += 1
+            # Go from last character in the path and stop when "/" or "\"
+            # appears. Depends on the OS (Windows --> "\", Linux --> "/")
             if file_path[-count] == "/" or file_path[-count] == "\\":
                 break
             file_name = file_name + file_path[-count]
@@ -335,21 +306,18 @@ class App(QtGui.QWidget):
         for char in file_name:
             num += 1
             new_file_name += file_name[-num]
-
-        return  new_file_name
+        return new_file_name
 
     @Slot()
     def select_file(self):
         """
-        You choose a file from a disk
+        Select a file from a disk and return the name of that file
         """
-        self.fname = QtGui.QFileDialog.getOpenFileName()
-        # print first element in a tuple self.fname[0] which is a file name
-        # that it calls file_name_from_path to print only a file name
-        self.statusfileLabel.setText(str(
-            self.filename_from_path(self.fname[0])))
-        # self.statusfileLabel.setAlignment(QtCore.Qt.AlignTop)
-        if str(self.fname[0]) is not "":
+        self.fname, self.ftype = QtGui.QFileDialog.getOpenFileName()
+        # calls file_name_from_path to print only a file name and not the path
+        print(self.fname)
+        self.fileLabel.setText(self.fname)
+        if self.fname:
             self.submitButton.setEnabled(True)
         else:
             self.submitButton.setDisabled(True)
@@ -364,7 +332,6 @@ class App(QtGui.QWidget):
         # addressbook file name as statusLabel text
         self.statusaddressLabel.setText(
             self.filename_from_path(str(self.aname[0])))
-        #self.statusLabel.setAlignment(QtCore.Qt.AlignTop)
 
     @Slot()
     def do_submit(self):
@@ -380,15 +347,99 @@ class App(QtGui.QWidget):
         except:
             self.final_tuple = self.list_of_tuples
 
-        self.saving_to_file(self.outputfileLine.text(),
-                            self.final_tuple)
+        self.saving_to_file(self.outputfileLine.text(), self.final_tuple)
         print(self.list_of_tuples)
-        self.saving_to_file(self.outputfileLine.text(),
-                            self.list_of_tuples)
+        self.saving_to_file(self.outputfileLine.text(), self.list_of_tuples)
+
+
+class Mobile(App):
+    """
+    Mobile widget in a main window App, inherits from App class
+    Overwrites the initUI GUI method
+    """
+    def __init__(self, parent=None):
+        super(Mobile, self).__init__(parent)
+
+        self.initUI()
+
+    def initUI(self):
+        # set minimus size and window title
+        self.setWindowTitle("Mobile Toplist-Com")
+
+        # add a widget to a layout
+        layout = QtGui.QGridLayout()
+        self.inputfileLabel = QtGui.QLabel("Input file:")
+        self.fileLabel = QtGui.QLabel()
+        self.fileButton = QtGui.QPushButton("Browse")
+        self.fileButton.resize(self.fileButton.sizeHint())
+        self.outputfileLabel = QtGui.QLabel("Output file:")
+        self.outputfileLine = QtGui.QLineEdit()
+        self.outputfileLine.setText("toplist-" + str(self.today) + ".csv")
+        self.encodingLabel = QtGui.QLabel("Encoding:")
+        self.encodingLine = QtGui.QLineEdit()
+        self.encodingLine.setText("windows-1250")
+        self.submitButton = QtGui.QPushButton("Submit")
+        self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+
+        # grid layout
+        layout.addWidget(self.inputfileLabel, 0, 0)
+        layout.addWidget(self.fileLabel, 0, 1)
+        layout.addWidget(self.fileButton, 0, 2)
+        layout.addWidget(self.outputfileLabel, 1, 0)
+        layout.addWidget(self.outputfileLine, 1, 1)
+        layout.addWidget(self.encodingLabel, 2, 0)
+        layout.addWidget(self.encodingLine, 2, 1)
+        layout.addWidget(self.submitButton, 3, 2, 1, 1)
+        self.setLayout(layout)
+        self.hide()
+        # event when the button is clicked
+        self.fileButton.clicked.connect(self.select_file)
+        self.submitButton.clicked.connect(self.do_submit)
+
+    def mobile_xlsx(self, mobile_file, encoding_code, book=None):
+        """
+        Takes T-Com xlsx mobile file and returns dictionary with names from
+        addressbook or phone naumbers and amount of money spent e.g.
+        {"123 456 789": 123.45} or {"Ivan H": 123.45"}
+        """
+        d = dict()
+        try:
+            # mobile_table[0] is a file name from tuple mobile_table
+            data = open(mobile_file)
+        except:
+            print("No such file %s" % mobile_file)
+            sys.exit("Quitting...")
+
+        for line in data:
+            if line.startswith("+") == False:
+                continue
+            line = line.rstrip()
+            line = line.decode(encoding_code)
+            line = line.split(";")
+            for word in line:
+                try:
+                    for name in book:
+                        if name == word:
+                            # enters {"name":422.16}, not name:422,16
+                            d[name] = float(line[35].replace(',', '.'))
+                # if there is no addressbook, use phone number aka line[0]
+                except:
+                    d[line[0]] = float(line[35].replace(',', '.'))
+        return d
+
+    def do_submit(self):
+        print(self.filename_from_path( self.fname))
+        # need to add dictionary file here later
+        encoding_code = str(self.encodingLine.text())
+        print(encoding_code)
+        dictionary = self.mobile_xlsx(self.fname,
+                                      encoding_code)
+        # takes dictionary and returns sorted list of tuples
+        lst = self.sort_dictionary_to_list(dictionary)
+        print(lst)
 
 
 def main():
-
     app = QtGui.QApplication(sys.argv)
     instance = MyApp()
     instance.show()
