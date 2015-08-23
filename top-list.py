@@ -7,6 +7,7 @@ import datetime
 from PySide import QtGui
 from PySide import QtCore
 from PySide.QtCore import Slot
+from functools import partial
 
 
 class MyApp(QtGui.QMainWindow):
@@ -166,7 +167,9 @@ class App(QtGui.QWidget):
         self.submitButton.setDisabled(True)
 
         # event when the button is clicked
-        self.fileButton.clicked.connect(self.select_file)
+        self.fileButton.clicked.connect(partial(self.select_file,
+                                                self.submitButton,
+                                                self.fileLabel))
         self.submitButton.clicked.connect(self.do_submit)
         self.addressButton.clicked.connect(self.select_addressbook)
 
@@ -309,18 +312,19 @@ class App(QtGui.QWidget):
         return new_file_name
 
     @Slot()
-    def select_file(self):
+    def select_file(self, button_to_enable, label_to_write):
         """
-        Select a file from a disk and return the name of that file
+        Select a file, write its name to label, enable submit button
         """
-        self.fname, self.ftype = QtGui.QFileDialog.getOpenFileName()
+        self.fname, ftype = QtGui.QFileDialog.getOpenFileName()
         # calls file_name_from_path to print only a file name and not the path
-        print(self.fname)
-        self.fileLabel.setText(self.fname)
+        fname_for_label = self.filename_from_path(self.fname)
+        print(self.fname) # for debuging
+        label_to_write.setText(fname_for_label)
         if self.fname:
-            self.submitButton.setEnabled(True)
+            button_to_enable.setEnabled(True)
         else:
-            self.submitButton.setDisabled(True)
+            button_to_enable.setDisabled(True)
 
     @Slot()
     def select_addressbook(self):
@@ -392,8 +396,11 @@ class Mobile(App):
         layout.addWidget(self.submitButton, 3, 2, 1, 1)
         self.setLayout(layout)
         self.hide()
+
         # event when the button is clicked
-        self.fileButton.clicked.connect(self.select_file)
+        self.fileButton.clicked.connect(partial(self.select_file,
+                                                self.submitButton,
+                                                self.fileLabel))
         self.submitButton.clicked.connect(self.do_submit)
 
     def mobile_xlsx(self, mobile_file, encoding_code, book=None):
