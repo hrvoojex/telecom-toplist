@@ -427,10 +427,8 @@ def filename_from_path(file_path):
     """
     Takes a file path as string and returns only a file name
     """
-    
-    new_file_name = os.path.basename(file_path)
 
-    return new_file_name
+    return os.path.basename(file_path)
     
 def main():
     app = QtGui.QApplication(sys.argv)
