@@ -290,27 +290,6 @@ class App(QtGui.QWidget):
                     new_list[index] = (list_of_tuples[index][0], line[2])
         return new_list
 
-    def filename_from_path(self, file_path):
-        """
-        Takes a file path as string and returns only a file name
-        """
-        count = 0
-        file_name = ""
-        for char in file_path:
-            count += 1
-            # Go from last character in the path and stop when "/" or "\"
-            # appears. Depends on the OS (Windows --> "\", Linux --> "/")
-            if file_path[-count] == "/" or file_path[-count] == "\\":
-                break
-            file_name = file_name + file_path[-count]
-
-        num = 0
-        new_file_name = ""
-        for char in file_name:
-            num += 1
-            new_file_name += file_name[-num]
-        return new_file_name
-
     @Slot()
     def select_file(self, button_to_enable, label_to_write):
         """
@@ -318,7 +297,7 @@ class App(QtGui.QWidget):
         """
         self.fname, ftype = QtGui.QFileDialog.getOpenFileName()
         # calls file_name_from_path to print only a file name and not the path
-        fname_for_label = self.filename_from_path(self.fname)
+        fname_for_label = filename_from_path(self.fname)
         print(self.fname) # for debuging
         label_to_write.setText(fname_for_label)
         if self.fname:
@@ -331,11 +310,10 @@ class App(QtGui.QWidget):
         """
         Select the addressbook file from file system
         """
-        self.aname = QtGui.QFileDialog.getOpenFileName()
+        self.aname, _ = QtGui.QFileDialog.getOpenFileName()
         # assign first element in a tuple,
         # addressbook file name as statusLabel text
-        self.statusaddressLabel.setText(
-            self.filename_from_path(str(self.aname[0])))
+        self.statusaddressLabel.setText(filename_from_path(self.aname))            
 
     @Slot()
     def do_submit(self):
@@ -435,7 +413,7 @@ class Mobile(App):
         return d
 
     def do_submit(self):
-        print(self.filename_from_path( self.fname))
+        print(filename_from_path( self.fname))
         # need to add dictionary file here later
         encoding_code = str(self.encodingLine.text())
         print(encoding_code)
@@ -445,7 +423,13 @@ class Mobile(App):
         lst = self.sort_dictionary_to_list(dictionary)
         print(lst)
 
+def filename_from_path(file_path):
+    """
+    Takes a file path as string and returns only a file name
+    """
 
+    return os.path.basename(file_path)
+    
 def main():
     app = QtGui.QApplication(sys.argv)
     instance = MyApp()
