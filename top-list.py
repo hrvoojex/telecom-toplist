@@ -96,6 +96,35 @@ class About(QtGui.QWidget):
         self.setLayout(layout)
         # hide a window by default when the application starts
         self.hide()
+        
+        
+class BrowseAndSubmit(QtGui.QWidget):
+    def __init__(self, parent=None):
+        super(BrowseAndSubmit, self).__init__(parent)
+        
+        self.inputfileLabel = QtGui.QLabel("Input file:")
+        self.fileLabel = QtGui.QLabel()
+        self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+        self.fileButton = QtGui.QPushButton("Browse")
+        self.fileButton.resize(self.fileButton.sizeHint())
+        self.fileButton.clicked.connect(self.select_file)
+        self.submitButton = QtGui.QPushButton("&Submit")
+        self.submitButton.setMinimumSize(50, 50)
+        self.submitButton.setDisabled(True)
+        
+    @Slot()
+    def select_file(self):
+        """
+        Select a file from a disk and return the name of that file
+        """
+        self.fname, _ = QtGui.QFileDialog.getOpenFileName()
+        # calls file_name_from_path to print only a file name and not the path
+        print(self.fname)
+        self.fileLabel.setText(self.fname)
+        if self.fname:
+            self.submitButton.setEnabled(True)
+        else:
+            self.submitButton.setDisabled(True)
 
 
 class App(QtGui.QWidget):
@@ -104,9 +133,6 @@ class App(QtGui.QWidget):
     """
     def __init__(self, parent=None):
         super(App, self).__init__(parent)
-
-        # todays date
-        self.today = datetime.date.today()
 
         # What do you want to search in a file: maxadsl traffic, talk time
         # or amount of money
@@ -149,28 +175,20 @@ class App(QtGui.QWidget):
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
         self.encodingLine.setPlaceholderText("e.g. windows-1250 or utf-8")
-        self.fileLabel_left = QtGui.QLabel("Input file:")
-        self.fileLabel = QtGui.QLabel()
-        self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        self.fileButton = QtGui.QPushButton("Browse", self)
-        self.fileButton.resize(self.fileButton.sizeHint())
         self.outputfileLabel = QtGui.QLabel("Output file:")
         self.outputfileLine = QtGui.QLineEdit()
-        self.outputfileLine.setText("toplist-" + str(self.today) + ".csv")
+        self.outputfileLine.setText(
+                              "toplist-" + str(datetime.date.today()) + ".csv")
         self.addressLabel = QtGui.QLabel("Addressbook csv file:")
         self.statusaddressLabel = QtGui.QLabel()
         self.statusaddressLabel.setFrameStyle(
                 QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.addressButton = QtGui.QPushButton("Browse", self)
-        self.submitButton = QtGui.QPushButton("&Submit")
-        self.submitButton.setMinimumSize(50, 50)
-        self.submitButton.setDisabled(True)
+        
+        # Browse and Submit widgets
+        self.browse_and_submit = BrowseAndSubmit()
 
-        # event when the button is clicked
-        self.fileButton.clicked.connect(partial(self.select_file,
-                                                self.submitButton,
-                                                self.fileLabel))
-        self.submitButton.clicked.connect(self.do_submit)
+        self.browse_and_submit.submitButton.clicked.connect(self.do_submit)
         self.addressButton.clicked.connect(self.select_addressbook)
 
         # set layout
@@ -179,15 +197,15 @@ class App(QtGui.QWidget):
         grid.addWidget(self.keywordComboBox, 0, 1, 1, 2)
         grid.addWidget(self.encodingLabel, 1, 0)
         grid.addWidget(self.encodingLine, 1, 1, 1, 2)
-        grid.addWidget(self.fileLabel_left, 2, 0)
-        grid.addWidget(self.fileLabel, 2, 1)
-        grid.addWidget(self.fileButton, 2, 2)
+        grid.addWidget(self.browse_and_submit.inputfileLabel, 2, 0)
+        grid.addWidget(self.browse_and_submit.fileLabel, 2, 1)
+        grid.addWidget(self.browse_and_submit.fileButton, 2, 2)
         grid.addWidget(self.outputfileLabel, 3, 0)
         grid.addWidget(self.outputfileLine, 3, 1, 1, 2)
         grid.addWidget(self.addressLabel, 5, 0)
         grid.addWidget(self.statusaddressLabel, 5, 1)
         grid.addWidget(self.addressButton, 5, 2)
-        grid.addWidget(self.submitButton, 6, 2)
+        grid.addWidget(self.browse_and_submit.submitButton, 6, 2)
         self.setLayout(grid)
 
         # hide a widget
@@ -237,17 +255,6 @@ class App(QtGui.QWidget):
                             float(line[9].replace(',', '.')))
         return dictionary
 
-    def sort_dictionary_to_list(self, diction):
-        """
-        Takes dictionary (e.g. from lines() function) diction
-        and returns sorted list of tuples by value from dictionary.
-        """
-        tmp = list()
-        for key, val in diction.items():
-            tmp.append((val, key))
-            tmp.sort(reverse=True)
-        return tmp
-
     def saving_to_file(self, filename, resulting_tuple_list):
         """
         Saves result to a csv file. Takes listname and saves it
@@ -291,21 +298,6 @@ class App(QtGui.QWidget):
         return new_list
 
     @Slot()
-    def select_file(self, button_to_enable, label_to_write):
-        """
-        Select a file, write its name to label, enable submit button
-        """
-        self.fname, ftype = QtGui.QFileDialog.getOpenFileName()
-        # calls file_name_from_path to print only a file name and not the path
-        fname_for_label = filename_from_path(self.fname)
-        print(self.fname) # for debuging
-        label_to_write.setText(fname_for_label)
-        if self.fname:
-            button_to_enable.setEnabled(True)
-        else:
-            button_to_enable.setDisabled(True)
-
-    @Slot()
     def select_addressbook(self):
         """
         Select the addressbook file from file system
@@ -319,13 +311,13 @@ class App(QtGui.QWidget):
     def do_submit(self):
         self.keyword_string = self.keywordComboBox.currentText()
         self.encode_string = self.encodingLine.text()
-        dictionary = self.lines(self.fname,
+        dictionary = self.lines(self.browse_and_submit.fname,
                                 self.encode_string,
                                 self.keyword_string)
-        self.list_of_tuples = self.sort_dictionary_to_list(dictionary)
+        self.list_of_tuples = sort_dictionary_to_list(dictionary)
         try:
             self.final_tuple = self.take_from_addressbook(self.list_of_tuples,
-                                                          str(self.aname[0]))
+                                                          self.aname)
         except:
             self.final_tuple = self.list_of_tuples
 
@@ -334,7 +326,7 @@ class App(QtGui.QWidget):
         self.saving_to_file(self.outputfileLine.text(), self.list_of_tuples)
 
 
-class Mobile(App):
+class Mobile(QtGui.QWidget):
     """
     Mobile widget in a main window App, inherits from App class
     Overwrites the initUI GUI method
@@ -350,36 +342,31 @@ class Mobile(App):
 
         # add a widget to a layout
         layout = QtGui.QGridLayout()
-        self.inputfileLabel = QtGui.QLabel("Input file:")
-        self.fileLabel = QtGui.QLabel()
-        self.fileButton = QtGui.QPushButton("Browse")
-        self.fileButton.resize(self.fileButton.sizeHint())
+        
         self.outputfileLabel = QtGui.QLabel("Output file:")
         self.outputfileLine = QtGui.QLineEdit()
-        self.outputfileLine.setText("toplist-" + str(self.today) + ".csv")
+        self.outputfileLine.setText(
+                              "toplist-" + str(datetime.date.today()) + ".csv")
         self.encodingLabel = QtGui.QLabel("Encoding:")
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
-        self.submitButton = QtGui.QPushButton("Submit")
-        self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+        
+        # Browse and Submit meta widgets
+        self.browse_and_submit = BrowseAndSubmit()
 
         # grid layout
-        layout.addWidget(self.inputfileLabel, 0, 0)
-        layout.addWidget(self.fileLabel, 0, 1)
-        layout.addWidget(self.fileButton, 0, 2)
+        layout.addWidget(self.browse_and_submit.inputfileLabel, 0, 0)
+        layout.addWidget(self.browse_and_submit.fileLabel, 0, 1)
+        layout.addWidget(self.browse_and_submit.fileButton, 0, 2)
         layout.addWidget(self.outputfileLabel, 1, 0)
         layout.addWidget(self.outputfileLine, 1, 1)
         layout.addWidget(self.encodingLabel, 2, 0)
         layout.addWidget(self.encodingLine, 2, 1)
-        layout.addWidget(self.submitButton, 3, 2, 1, 1)
+        layout.addWidget(self.browse_and_submit.submitButton, 3, 2, 1, 1)
         self.setLayout(layout)
         self.hide()
-
-        # event when the button is clicked
-        self.fileButton.clicked.connect(partial(self.select_file,
-                                                self.submitButton,
-                                                self.fileLabel))
-        self.submitButton.clicked.connect(self.do_submit)
+        
+        self.browse_and_submit.submitButton.clicked.connect(self.do_submit)
 
     def mobile_xlsx(self, mobile_file, encoding_code, book=None):
         """
@@ -413,14 +400,14 @@ class Mobile(App):
         return d
 
     def do_submit(self):
-        print(filename_from_path( self.fname))
+        print(filename_from_path(self.browse_and_submit.fname))
         # need to add dictionary file here later
         encoding_code = str(self.encodingLine.text())
         print(encoding_code)
-        dictionary = self.mobile_xlsx(self.fname,
+        dictionary = self.mobile_xlsx(self.browse_and_submit.fname,
                                       encoding_code)
         # takes dictionary and returns sorted list of tuples
-        lst = self.sort_dictionary_to_list(dictionary)
+        lst = sort_dictionary_to_list(dictionary)
         print(lst)
 
 def filename_from_path(file_path):
@@ -429,6 +416,17 @@ def filename_from_path(file_path):
     """
 
     return os.path.basename(file_path)
+    
+def sort_dictionary_to_list(diction):
+        """
+        Takes dictionary (e.g. from lines() function) diction
+        and returns sorted list of tuples by value from dictionary.
+        """
+        tmp = list()
+        for key, val in diction.items():
+            tmp.append((val, key))
+            tmp.sort(reverse=True)
+        return tmp
     
 def main():
     app = QtGui.QApplication(sys.argv)
