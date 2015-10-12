@@ -371,7 +371,8 @@ class Mobile(QtGui.QWidget):
     def mobile_xlsx(self, mobile_file, encoding_code, book=None):
         """
         Takes T-Com xlsx mobile file and returns dictionary with names from
-        addressbook or phone naumbers and amount of money spent e.g.
+        addressbook or if there is no addressbook,
+        phone naumbers and amount of money spent e.g.
         {"123 456 789": 123.45} or {"Ivan H": 123.45"}
         """
         d = dict()
@@ -388,6 +389,7 @@ class Mobile(QtGui.QWidget):
             line = line.rstrip()
             line = line.decode(encoding_code)
             line = line.split(";")
+            print(line)  # for debugging
             for word in line:
                 try:
                     for name in book:
