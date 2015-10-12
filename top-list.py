@@ -117,9 +117,9 @@ class BrowseAndSubmit(QtGui.QWidget):
         """
         Select a file from a disk and return the name of that file
         """
+        # (self.fname, _) is a tuple, we take only self.fname not the path
         self.fname, _ = QtGui.QFileDialog.getOpenFileName()
-        # calls file_name_from_path to print only a file name and not the path
-        print(self.fname)
+        print(self.fname)  # for debugging
         self.fileLabel.setText(self.fname)
         if self.fname:
             self.submitButton.setEnabled(True)
@@ -412,7 +412,7 @@ class Mobile(QtGui.QWidget):
 
 def filename_from_path(file_path):
     """
-    Takes a file path as string and returns only a file name
+    Takes a file path as a string and returns only a file name
     """
 
     return os.path.basename(file_path)
