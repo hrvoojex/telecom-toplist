@@ -18,7 +18,7 @@ class MyApp(QtGui.QMainWindow):
         super(MyApp, self).__init__(parent)
 
         # main window size, title and icon
-        self.setMinimumSize(500, 350)
+        self.setMinimumSize(470, 350)
         self.setWindowTitle("Toplist-Com")
         self.setWindowIcon(QtGui.QIcon("toplist-com.png"))
 
@@ -103,6 +103,7 @@ class BrowseAndSubmit(QtGui.QWidget):
         super(BrowseAndSubmit, self).__init__(parent)
         
         self.inputfileLabel = QtGui.QLabel("Input file:")
+        self.inputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.fileLabel = QtGui.QLabel()
         self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.fileButton = QtGui.QPushButton("Browse")
@@ -169,17 +170,21 @@ class App(QtGui.QWidget):
 
         # layouts of widgets
         self.keywordeLabel = QtGui.QLabel("Choose a keyword:")
+        self.keywordeLabel.setAlignment(QtCore.Qt.AlignRight)
         self.keywordComboBox = QtGui.QComboBox()
         self.keywordComboBox.addItems(self.toplist_keywords)
         self.encodingLabel = QtGui.QLabel("Encoding:")
+        self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
         self.encodingLine.setPlaceholderText("e.g. windows-1250 or utf-8")
         self.outputfileLabel = QtGui.QLabel("Output file:")
+        self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText(
-                              "toplist-" + str(datetime.date.today()) + ".csv")
+                              "toplist-landline-" + str(datetime.date.today()) + ".csv")
         self.addressLabel = QtGui.QLabel("Addressbook csv file:")
+        self.addressLabel.setAlignment(QtCore.Qt.AlignRight)
         self.statusaddressLabel = QtGui.QLabel()
         self.statusaddressLabel.setFrameStyle(
                 QtGui.QFrame.Box | QtGui.QFrame.Sunken)
@@ -346,7 +351,7 @@ class Mobile(QtGui.QWidget):
         self.outputfileLabel = QtGui.QLabel("Output file:")
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText(
-                              "toplist-" + str(datetime.date.today()) + ".csv")
+                              "toplist-mobile-" + str(datetime.date.today()) + ".csv")
         self.encodingLabel = QtGui.QLabel("Encoding:")
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
@@ -368,16 +373,15 @@ class Mobile(QtGui.QWidget):
         
         self.browse_and_submit.submitButton.clicked.connect(self.do_submit)
 
-    def mobile_xlsx(self, mobile_file, encoding_code, book=None):
+    def mobile_csv(self, mobile_file, encoding_code, book=None):
         """
-        Takes T-Com xlsx mobile file and returns dictionary with names from
+        Takes T-Com csv (from xslx) mobile file and returns dictionary with names from
         addressbook or if there is no addressbook,
         phone naumbers and amount of money spent e.g.
         {"123 456 789": 123.45} or {"Ivan H": 123.45"}
         """
         d = dict()
         try:
-            # mobile_table[0] is a file name from tuple mobile_table
             data = open(mobile_file)
         except:
             print("No such file %s" % mobile_file)
@@ -389,7 +393,7 @@ class Mobile(QtGui.QWidget):
             line = line.rstrip()
             line = line.decode(encoding_code)
             line = line.split(";")
-            print(line)  # for debugging
+            #  print(line)  # for debugging
             for word in line:
                 try:
                     for name in book:
@@ -399,14 +403,15 @@ class Mobile(QtGui.QWidget):
                 # if there is no addressbook, use phone number aka line[0]
                 except:
                     d[line[0]] = float(line[35].replace(',', '.'))
+        #print(d)  # for debugging
         return d
 
     def do_submit(self):
-        print(filename_from_path(self.browse_and_submit.fname))
+        #print(filename_from_path(self.browse_and_submit.fname))  # for debugging
         # need to add dictionary file here later
         encoding_code = str(self.encodingLine.text())
-        print(encoding_code)
-        dictionary = self.mobile_xlsx(self.browse_and_submit.fname,
+        #print(encoding_code)  # for debugging
+        dictionary = self.mobile_csv(self.browse_and_submit.fname,
                                       encoding_code)
         # takes dictionary and returns sorted list of tuples
         lst = sort_dictionary_to_list(dictionary)
