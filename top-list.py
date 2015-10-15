@@ -18,7 +18,7 @@ class MyApp(QtGui.QMainWindow):
         super(MyApp, self).__init__(parent)
 
         # main window size, title and icon
-        self.setMinimumSize(470, 350)
+        self.setMinimumSize(500, 350)
         self.setWindowTitle("Toplist-Com")
         self.setWindowIcon(QtGui.QIcon("toplist-com.png"))
 
@@ -27,7 +27,7 @@ class MyApp(QtGui.QMainWindow):
 
         # create instance of each 'select' menu widget and shows default one
         self.app = App(self)
-        #self.app.show()
+        #self.app.show()  # Comment this out not to show default tab, but empty
         self.mobile = Mobile(self)
         # new pop up window for "About" info, no parent == new window
         self.about = About()
@@ -106,8 +106,7 @@ class BrowseAndSubmit(QtGui.QWidget):
         self.inputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.fileLabel = QtGui.QLabel()
         self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        self.fileButton = QtGui.QPushButton("Browse")
-        self.fileButton.resize(self.fileButton.sizeHint())
+        self.fileButton = QtGui.QPushButton("&Browse")
         self.fileButton.clicked.connect(self.select_file)
         self.submitButton = QtGui.QPushButton("&Submit")
         self.submitButton.setMinimumSize(50, 50)
@@ -205,11 +204,11 @@ class App(QtGui.QWidget):
         grid.addWidget(self.browse_and_submit.inputfileLabel, 2, 0)
         grid.addWidget(self.browse_and_submit.fileLabel, 2, 1)
         grid.addWidget(self.browse_and_submit.fileButton, 2, 2)
-        grid.addWidget(self.outputfileLabel, 3, 0)
-        grid.addWidget(self.outputfileLine, 3, 1, 1, 2)
-        grid.addWidget(self.addressLabel, 5, 0)
-        grid.addWidget(self.statusaddressLabel, 5, 1)
-        grid.addWidget(self.addressButton, 5, 2)
+        grid.addWidget(self.outputfileLabel, 4, 0)
+        grid.addWidget(self.outputfileLine, 4, 1, 1, 2)
+        grid.addWidget(self.addressLabel, 3, 0)
+        grid.addWidget(self.statusaddressLabel, 3, 1)
+        grid.addWidget(self.addressButton, 3, 2)
         grid.addWidget(self.browse_and_submit.submitButton, 6, 2)
         self.setLayout(grid)
 
@@ -362,10 +361,11 @@ class Mobile(QtGui.QWidget):
         self.statusaddressLabel = QtGui.QLabel()
         self.statusaddressLabel.setFrameStyle(
                 QtGui.QFrame.Box | QtGui.QFrame.Sunken)
-        self.addressButton = QtGui.QPushButton("Browse", self)
+        self.addressButton = QtGui.QPushButton("&Browse", self)
         
         # Browse and Submit meta widgets
         self.browse_and_submit = BrowseAndSubmit()
+        self.app = App()
 
         # grid layout
         layout.addWidget(self.encodingLabel, 0, 0)
@@ -384,6 +384,7 @@ class Mobile(QtGui.QWidget):
         self.hide()
         
         self.browse_and_submit.submitButton.clicked.connect(self.do_submit)
+        self.addressButton.clicked.connect(self.app.select_addressbook)
 
     def mobile_csv(self, mobile_file, encoding_code, book=None):
         """
