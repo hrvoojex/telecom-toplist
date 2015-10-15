@@ -349,25 +349,37 @@ class Mobile(QtGui.QWidget):
         layout = QtGui.QGridLayout()
         
         self.outputfileLabel = QtGui.QLabel("Output file:")
+        self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText(
                               "toplist-mobile-" + str(datetime.date.today()) + ".csv")
         self.encodingLabel = QtGui.QLabel("Encoding:")
+        self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
+        self.addressLabel = QtGui.QLabel("Addressbook csv file:")
+        self.addressLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.statusaddressLabel = QtGui.QLabel()
+        self.statusaddressLabel.setFrameStyle(
+                QtGui.QFrame.Box | QtGui.QFrame.Sunken)
+        self.addressButton = QtGui.QPushButton("Browse", self)
         
         # Browse and Submit meta widgets
         self.browse_and_submit = BrowseAndSubmit()
 
         # grid layout
-        layout.addWidget(self.browse_and_submit.inputfileLabel, 0, 0)
-        layout.addWidget(self.browse_and_submit.fileLabel, 0, 1)
-        layout.addWidget(self.browse_and_submit.fileButton, 0, 2)
-        layout.addWidget(self.outputfileLabel, 1, 0)
-        layout.addWidget(self.outputfileLine, 1, 1)
-        layout.addWidget(self.encodingLabel, 2, 0)
-        layout.addWidget(self.encodingLine, 2, 1)
-        layout.addWidget(self.browse_and_submit.submitButton, 3, 2, 1, 1)
+        layout.addWidget(self.encodingLabel, 0, 0)
+        layout.addWidget(self.encodingLine, 0, 1, 1, 2)
+        layout.addWidget(self.browse_and_submit.inputfileLabel, 1, 0)
+        layout.addWidget(self.browse_and_submit.fileLabel, 1, 1)
+        layout.addWidget(self.browse_and_submit.fileButton, 1, 2)
+        layout.addWidget(self.addressLabel, 2, 0)
+        layout.addWidget(self.statusaddressLabel, 2, 1)
+        layout.addWidget(self.addressButton, 2, 2)
+        layout.addWidget(self.outputfileLabel, 3, 0)
+        layout.addWidget(self.outputfileLine, 3, 1, 1, 2)
+
+        layout.addWidget(self.browse_and_submit.submitButton, 4, 2, 1, 1)
         self.setLayout(layout)
         self.hide()
         
