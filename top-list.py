@@ -176,7 +176,7 @@ class App(QtGui.QWidget):
         self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
-        self.encodingLine.setPlaceholderText("e.g. windows-1250 or utf-8")
+        #self.encodingLine.setPlaceholderText("e.g. windows-1250 or utf-8")
         self.outputfileLabel = QtGui.QLabel("Output file:")
         self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.outputfileLine = QtGui.QLineEdit()
