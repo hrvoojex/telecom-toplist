@@ -108,6 +108,11 @@ class BrowseAndSubmit(QtGui.QWidget):
         self.fileLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.fileButton = QtGui.QPushButton("&Browse")
         self.fileButton.clicked.connect(self.select_file)
+        self.outputfileLabel = QtGui.QLabel("Output file:")
+        self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.outputfileLine = QtGui.QLineEdit()
+        self.outputfileLine.setText("toplist-" + \
+                                    str(datetime.date.today()) + ".csv")
         self.submitButton = QtGui.QPushButton("&Submit")
         self.submitButton.setMinimumSize(50, 50)
         self.submitButton.setDisabled(True)
@@ -164,6 +169,9 @@ class App(QtGui.QWidget):
 
     def initUI(self):
 
+        # Browse and Submit widgets
+        self.browse_and_submit = BrowseAndSubmit()
+
         self.setMinimumSize(450, 300)
         self.setWindowTitle("Landline Toplist-Com")
 
@@ -176,21 +184,18 @@ class App(QtGui.QWidget):
         self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
-        #self.encodingLine.setPlaceholderText("e.g. windows-1250 or utf-8")
-        self.outputfileLabel = QtGui.QLabel("Output file:")
-        self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
-        self.outputfileLine = QtGui.QLineEdit()
-        self.outputfileLine.setText(
-                              "toplist-landline-" + str(datetime.date.today()) + ".csv")
+        self.browse_and_submit.outputfileLabel = QtGui.QLabel("Outputt file:")
+        self.browse_and_submit.outputfileLabel.setAlignment(
+                QtCore.Qt.AlignRight)
+        self.browse_and_submit.outputfileLine = QtGui.QLineEdit()
+        self.browse_and_submit.outputfileLine.setText(
+                "toplist-landline-" + str(datetime.date.today()) + ".csv")
         self.addressLabel = QtGui.QLabel("Addressbook csv file:")
         self.addressLabel.setAlignment(QtCore.Qt.AlignRight)
         self.statusaddressLabel = QtGui.QLabel()
         self.statusaddressLabel.setFrameStyle(
                 QtGui.QFrame.Box | QtGui.QFrame.Sunken)
         self.addressButton = QtGui.QPushButton("Browse", self)
-        
-        # Browse and Submit widgets
-        self.browse_and_submit = BrowseAndSubmit()
 
         self.browse_and_submit.submitButton.clicked.connect(self.do_submit)
         self.addressButton.clicked.connect(self.select_addressbook)
@@ -204,8 +209,8 @@ class App(QtGui.QWidget):
         grid.addWidget(self.browse_and_submit.inputfileLabel, 2, 0)
         grid.addWidget(self.browse_and_submit.fileLabel, 2, 1)
         grid.addWidget(self.browse_and_submit.fileButton, 2, 2)
-        grid.addWidget(self.outputfileLabel, 4, 0)
-        grid.addWidget(self.outputfileLine, 4, 1, 1, 2)
+        grid.addWidget(self.browse_and_submit.outputfileLabel, 4, 0)
+        grid.addWidget(self.browse_and_submit.outputfileLine, 4, 1, 1, 2)
         grid.addWidget(self.addressLabel, 3, 0)
         grid.addWidget(self.statusaddressLabel, 3, 1)
         grid.addWidget(self.addressButton, 3, 2)
@@ -325,9 +330,11 @@ class App(QtGui.QWidget):
         except:
             self.final_tuple = self.list_of_tuples
 
-        self.saving_to_file(self.outputfileLine.text(), self.final_tuple)
+        self.saving_to_file(self.browse_and_submit.outputfileLine.text(),
+                            self.final_tuple)
         print(self.list_of_tuples)
-        self.saving_to_file(self.outputfileLine.text(), self.list_of_tuples)
+        self.saving_to_file(self.browse_and_submit.outputfileLine.text(),
+                            self.list_of_tuples)
 
 
 class Mobile(QtGui.QWidget):
