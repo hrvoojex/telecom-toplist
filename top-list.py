@@ -316,7 +316,7 @@ class App(QtGui.QWidget):
         self.aname, _ = QtGui.QFileDialog.getOpenFileName()
         # assign first element in a tuple,
         # addressbook file name as statusLabel text
-        self.statusaddressLabel.setText(filename_from_path(self.aname))            
+        self.statusaddressLabel.setText(filename_from_path(self.aname))
 
     @Slot()
     def do_submit(self):
@@ -364,7 +364,7 @@ class Mobile(QtGui.QWidget):
         self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText(
-                              "toplist-mobile-" + str(datetime.date.today()) + ".csv")
+            "toplist-mobile-" + str(datetime.date.today()) + ".csv")
         self.encodingLabel = QtGui.QLabel("Encoding:")
         self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
@@ -397,7 +397,8 @@ class Mobile(QtGui.QWidget):
 
     def mobile_csv(self, mobile_file, encoding_code, book=None):
         """
-        Takes T-Com csv (from xslx) mobile file and returns dictionary with names from
+        Takes T-Com csv (from xslx) mobile file and
+        returns dictionary with names from
         addressbook or if there is no addressbook,
         phone naumbers and amount of money spent e.g.
         {"123 456 789": 123.45} or {"Ivan H": 123.45"}
@@ -429,7 +430,7 @@ class Mobile(QtGui.QWidget):
         return d
 
     def do_submit(self):
-        #print(filename_from_path(self.browse_and_submit.fname))  # for debugging
+        #print(filename_from_path(self.browse_and_submit.fname))
         # need to add dictionary file here later
         encoding_code = str(self.encodingLine.text())
         #print(encoding_code)  # for debugging
