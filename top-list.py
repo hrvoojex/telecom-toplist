@@ -115,6 +115,8 @@ class BrowseAndSubmit(QtGui.QWidget):
                                     str(datetime.date.today()) + ".csv")
         self.encodingLabel = QtGui.QLabel("Encoding:")
         self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.encodingLine = QtGui.QLineEdit()
+        self.encodingLine.setText("windows-1250")
         self.submitButton = QtGui.QPushButton("&Submit")
         self.submitButton.setMinimumSize(50, 50)
         self.submitButton.setDisabled(True)
@@ -182,8 +184,6 @@ class App(QtGui.QWidget):
         self.keywordeLabel.setAlignment(QtCore.Qt.AlignRight)
         self.keywordComboBox = QtGui.QComboBox()
         self.keywordComboBox.addItems(self.toplist_keywords)
-        self.encodingLine = QtGui.QLineEdit()
-        self.encodingLine.setText("windows-1250")
         self.browse_and_submit.outputfileLabel = QtGui.QLabel("Outputt file:")
         self.browse_and_submit.outputfileLabel.setAlignment(
                 QtCore.Qt.AlignRight)
@@ -205,7 +205,7 @@ class App(QtGui.QWidget):
         grid.addWidget(self.keywordeLabel, 0, 0)
         grid.addWidget(self.keywordComboBox, 0, 1, 1, 2)
         grid.addWidget(self.browse_and_submit.encodingLabel, 1, 0)
-        grid.addWidget(self.encodingLine, 1, 1, 1, 2)
+        grid.addWidget(self.browse_and_submit.encodingLine, 1, 1, 1, 2)
         grid.addWidget(self.browse_and_submit.inputfileLabel, 2, 0)
         grid.addWidget(self.browse_and_submit.fileLabel, 2, 1)
         grid.addWidget(self.browse_and_submit.fileButton, 2, 2)
@@ -319,7 +319,7 @@ class App(QtGui.QWidget):
     @Slot()
     def do_submit(self):
         self.keyword_string = self.keywordComboBox.currentText()
-        self.encode_string = self.encodingLine.text()
+        self.encode_string = self.browse_and_submit.encodingLine.text()
         dictionary = self.lines(self.browse_and_submit.fname,
                                 self.encode_string,
                                 self.keyword_string)
