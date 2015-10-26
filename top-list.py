@@ -184,12 +184,6 @@ class App(QtGui.QWidget):
         self.keywordeLabel.setAlignment(QtCore.Qt.AlignRight)
         self.keywordComboBox = QtGui.QComboBox()
         self.keywordComboBox.addItems(self.toplist_keywords)
-        self.browse_and_submit.outputfileLabel = QtGui.QLabel("Outputt file:")
-        self.browse_and_submit.outputfileLabel.setAlignment(
-                QtCore.Qt.AlignRight)
-        self.browse_and_submit.outputfileLine = QtGui.QLineEdit()
-        self.browse_and_submit.outputfileLine.setText(
-                "toplist-landline-" + str(datetime.date.today()) + ".csv")
         self.addressLabel = QtGui.QLabel("Addressbook csv file:")
         self.addressLabel.setAlignment(QtCore.Qt.AlignRight)
         self.statusaddressLabel = QtGui.QLabel()
