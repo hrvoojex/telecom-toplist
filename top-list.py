@@ -182,8 +182,6 @@ class App(QtGui.QWidget):
         self.keywordeLabel.setAlignment(QtCore.Qt.AlignRight)
         self.keywordComboBox = QtGui.QComboBox()
         self.keywordComboBox.addItems(self.toplist_keywords)
-        self.browse_and_submit.encodingLabel = QtGui.QLabel("Encoding:")
-        self.browse_and_submit.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
         self.encodingLine.setText("windows-1250")
         self.browse_and_submit.outputfileLabel = QtGui.QLabel("Outputt file:")
