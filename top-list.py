@@ -134,8 +134,7 @@ class App(QtGui.QWidget):
     def __init__(self, parent=None):
         super(App, self).__init__(parent)
 
-        # What do you want to search in a file: maxadsl traffic, talk time
-        # or amount of money
+        # Choose what to search in a csv file
         self.toplist_keywords = ["TRAFFIC",
                                  "TIME",
                                  "AMOUNT"]
@@ -388,8 +387,8 @@ class Mobile(QtGui.QWidget):
 
     def mobile_csv(self, mobile_file, encoding_code, book=None):
         """
-        Takes T-Com csv (from xslx) mobile file and returns dictionary with names from
-        addressbook or if there is no addressbook,
+        Takes T-Com csv (from xslx) mobile file and returns dictionary
+        with names from addressbook or if there is no addressbook,
         phone naumbers and amount of money spent e.g.
         {"123 456 789": 123.45} or {"Ivan H": 123.45"}
         """
@@ -425,10 +424,27 @@ class Mobile(QtGui.QWidget):
         encoding_code = str(self.encodingLine.text())
         #print(encoding_code)  # for debugging
         dictionary = self.mobile_csv(self.browse_and_submit.fname,
-                                      encoding_code)
+                                     encoding_code)
         # takes dictionary and returns sorted list of tuples
         lst = sort_dictionary_to_list(dictionary)
         print(lst)
+        self.to_file(self.outputfileLine.text(), lst)
+
+    def to_file(self, filename, resulting_tuple_list):
+        """
+        Saves result to a csv file. Takes listname and saves it
+        to a csv file named filename
+        """
+        f = open(filename, "w")
+        count = 0
+        self.encode_string = self.encodingLine.text()
+        for tuple_list_item in resulting_tuple_list:
+            count += 1
+            location = tuple_list_item[1].encode(self.encode_string)
+            f.write("{0:5}; {1:25}; {2:5}\n".format(count,
+                                                    location,
+                                                    tuple_list_item[0]))
+        f.close()
 
 def filename_from_path(file_path):
     """
