@@ -180,7 +180,7 @@ class App(QtGui.QWidget):
         self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText(
-                              "toplist-landline-" + str(datetime.date.today()) + ".csv")
+            "toplist-landline-" + str(datetime.date.today()) + ".csv")
         self.addressLabel = QtGui.QLabel("Addressbook csv file:")
         self.addressLabel.setAlignment(QtCore.Qt.AlignRight)
         self.statusaddressLabel = QtGui.QLabel()
@@ -350,7 +350,7 @@ class Mobile(QtGui.QWidget):
         self.outputfileLabel.setAlignment(QtCore.Qt.AlignRight)
         self.outputfileLine = QtGui.QLineEdit()
         self.outputfileLine.setText(
-                              "toplist-mobile-" + str(datetime.date.today()) + ".csv")
+            "toplist-mobile-" + str(datetime.date.today()) + ".csv")
         self.encodingLabel = QtGui.QLabel("Encoding:")
         self.encodingLabel.setAlignment(QtCore.Qt.AlignRight)
         self.encodingLine = QtGui.QLineEdit()
@@ -383,7 +383,16 @@ class Mobile(QtGui.QWidget):
         self.hide()
         
         self.browse_and_submit.submitButton.clicked.connect(self.do_submit)
-        self.addressButton.clicked.connect(self.app.select_addressbook)
+        self.addressButton.clicked.connect(self.write_addressbook)
+
+    @Slot()
+    def write_addressbook(self):
+        """
+        Write a selected addressbook file in a label
+        """
+        self.addressbook_name, _ = QtGui.QFileDialog.getOpenFileName()
+        self.statusaddressLabel.setText(
+            filename_from_path(self.addressbook_name))
 
     def mobile_csv(self, mobile_file, encoding_code, book=None):
         """
@@ -419,16 +428,48 @@ class Mobile(QtGui.QWidget):
         return d
 
     def do_submit(self):
-        #print(filename_from_path(self.browse_and_submit.fname))  # for debugging
-        # need to add dictionary file here later
+        # ovdje nastaviti
+        #uzima kao adresar samo ime, bez puta, možda je to greška
         encoding_code = str(self.encodingLine.text())
-        #print(encoding_code)  # for debugging
         dictionary = self.mobile_csv(self.browse_and_submit.fname,
                                      encoding_code)
         # takes dictionary and returns sorted list of tuples
         lst = sort_dictionary_to_list(dictionary)
-        print(lst)
-        self.to_file(self.outputfileLine.text(), lst)
+        print(self.statusaddressLabel.text())
+        print(lst)  # for debuging
+        try:
+            self.result = compare(lst, self.addressbook_name)
+            self.to_file(self.outputfileLine.text(), self.result)
+        except:
+            self.to_file(self.outputfileLine.text(), lst)
+
+    def compare(self, list_of_tuples, csv_addressbook):
+        """
+        Takes a dictionary and addressbook file and compares
+        identificator from dictionary to a name from addressbook
+        """
+        new_list = list_of_tuples
+        old_list = list()
+        try:
+            csv_file = open(csv_addressbook)
+        except:
+            print("No such file %s" % csv_addressbook)
+
+        for tpl in list_of_tuples:
+            # adds second value from tuple
+            # into the list "old_list" as identifier
+            old_list.append(tpl[1])
+
+        for line in csv_file:
+            line = line.rstrip()
+            line = line.decode(self.encodingLine.text())
+            line = line.split(";")
+            for word_from_csv_file in line:
+                if word_from_csv_file in old_list:
+                    index = old_list.index(word_from_csv_file)
+                    new_list[index] = (list_of_tuples[index][0], line[1])
+        return new_list
+
 
     def to_file(self, filename, resulting_tuple_list):
         """
