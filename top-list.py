@@ -391,8 +391,7 @@ class Mobile(QtGui.QWidget):
         Write a selected addressbook file in a label
         """
         self.addressbook_name, _ = QtGui.QFileDialog.getOpenFileName()
-        self.statusaddressLabel.setText(
-            filename_from_path(self.addressbook_name))
+        self.statusaddressLabel.setText(self.addressbook_name)
 
     def mobile_csv(self, mobile_file, encoding_code, book=None):
         """
@@ -427,22 +426,6 @@ class Mobile(QtGui.QWidget):
         #print(d)  # for debugging
         return d
 
-    def do_submit(self):
-        # ovdje nastaviti
-        #uzima kao adresar samo ime, bez puta, možda je to greška
-        encoding_code = str(self.encodingLine.text())
-        dictionary = self.mobile_csv(self.browse_and_submit.fname,
-                                     encoding_code)
-        # takes dictionary and returns sorted list of tuples
-        lst = sort_dictionary_to_list(dictionary)
-        print(self.statusaddressLabel.text())
-        print(lst)  # for debuging
-        try:
-            self.result = compare(lst, self.addressbook_name)
-            self.to_file(self.outputfileLine.text(), self.result)
-        except:
-            self.to_file(self.outputfileLine.text(), lst)
-
     def compare(self, list_of_tuples, csv_addressbook):
         """
         Takes a dictionary and addressbook file and compares
@@ -467,9 +450,25 @@ class Mobile(QtGui.QWidget):
             for word_from_csv_file in line:
                 if word_from_csv_file in old_list:
                     index = old_list.index(word_from_csv_file)
+                    print(index)
                     new_list[index] = (list_of_tuples[index][0], line[1])
+                    #print(new_list)
         return new_list
 
+    def do_submit(self):
+        encoding_code = str(self.encodingLine.text())
+        dictionary = self.mobile_csv(self.browse_and_submit.fname,
+                                     encoding_code)
+        # takes dictionary and returns sorted list of tuples
+        lst = sort_dictionary_to_list(dictionary)
+        print(self.statusaddressLabel.text())  # debugging
+        try:
+            self.result = self.compare(lst, self.addressbook_name)
+            print(self.result)
+            self.to_file(self.outputfileLine.text(), self.result)
+        except:
+            print(lst)
+            self.to_file(self.outputfileLine.text(), lst)
 
     def to_file(self, filename, resulting_tuple_list):
         """
@@ -481,10 +480,11 @@ class Mobile(QtGui.QWidget):
         self.encode_string = self.encodingLine.text()
         for tuple_list_item in resulting_tuple_list:
             count += 1
-            location = tuple_list_item[1].encode(self.encode_string)
-            f.write("{0:5}; {1:25}; {2:5}\n".format(count,
-                                                    location,
-                                                    tuple_list_item[0]))
+            user = tuple_list_item[1].encode(self.encode_string)
+            f.write("{0:5}; {1:40}; {2:10}\n".format(
+                count,
+                user,
+                tuple_list_item[0]))
         f.close()
 
 def filename_from_path(file_path):
