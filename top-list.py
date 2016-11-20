@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -137,7 +137,8 @@ class App(QtGui.QWidget):
         # Choose what to search in a csv file
         self.toplist_keywords = ["TRAFFIC",
                                  "TIME",
-                                 "AMOUNT"]
+                                 "AMOUNT"
+                                ]
 
         # default list of keywords if user choice is maxadsl
         self.maxadsl_default = [u'MAXadsl promet']
